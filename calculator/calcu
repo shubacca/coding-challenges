@@ -1,0 +1,126 @@
+#!/usr/bin/env python
+def two_numbers(expression_list):
+    """Print the result of each expression in expression_list, which is a list of strings.
+    Each string is an expression of two numbers with the operator in between.
+    The operators are +, -, *, /."""
+    for expression in expression_list:
+        if '+' in expression:
+            a, b = expression.split('+')
+            print(f'{a} + {b} = ', float(a) + float(b))
+        elif '-' in expression:
+            a, b = expression.split('-')
+            print(f'{a} - {b} = ', float(a) - float(b))
+        elif '*' in expression:
+            a, b = expression.split('*')
+            print(f'{a} * {b} = ', float(a) * float(b))
+        elif '/' in expression:
+            a, b = expression.split('/')
+            print(f'{a} / {b} = ', float(a) / float(b))
+            
+def shunting_yard(expression):
+    """
+    Evaluate a mathematical expression given in string format.
+
+    The expression is evaluated using the Shunting Yard Algorithm, which uses a stack
+    to evaluate the expression from left to right. The algorithm first tokenizes the
+    expression into individual elements, then iterates through the tokens, applying
+    operators in the order of their precedence.
+
+    Parameters
+    ----------
+    expression : str
+        The mathematical expression to evaluate.
+
+    Returns
+    -------
+    list
+        A list of strings and operators, in the order they should be evaluated.
+    """
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+    output = []
+    operators = []
+    # tokenize the input expression
+    tokens = expression.replace('(', ' ( ').replace(')', ' ) ').split()
+    for token in tokens:
+        if token.isnumeric():
+            output.append(token)
+        elif token in precedence:
+            while operators and operators[-1] != '(' and precedence[token] <= precedence[operators[-1]]:
+                output.append(operators.pop())
+            operators.append(token)
+        elif token == '(':
+            operators.append(token)
+        elif token == ')':
+            while operators and operators[-1] != '(':
+                output.append(operators.pop())
+            operators.pop()
+
+    while operators:
+        output.append(operators.pop())
+    return output
+
+def evaluate_expression(expression):
+    """
+    Evaluate a mathematical expression given in string format.
+
+    The expression is evaluated using the Shunting Yard Algorithm, which uses a stack
+    to evaluate the expression from left to right. The algorithm first tokenizes the
+    expression into individual elements, then iterates through the tokens, applying
+    operators in the order of their precedence.
+
+    Parameters
+    ----------
+    expression : str
+        The mathematical expression to evaluate.
+
+    Returns
+    -------
+    float
+        The result of the expression.
+    """
+    tokens = shunting_yard(expression)
+    # print(tokens)
+    calculation_stack = []
+    for elem in tokens:
+        if elem.isnumeric():
+            calculation_stack.append(elem)
+        else:
+            a = float(calculation_stack.pop())
+            b = float(calculation_stack.pop())
+            if elem == '+':
+                calculation_stack.append(a + b)
+            elif elem == '-':
+                calculation_stack.append(a - b)
+            elif elem == '*':
+                calculation_stack.append(a * b)
+            elif elem == '/':
+                calculation_stack.append(a / b)
+    return calculation_stack.pop()
+
+def main():
+    """
+    Main entry point for the calculator program.
+
+    The program evaluates a list of expressions, then prompts the user to enter an
+    expression to evaluate.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+    """
+    expression_list = ['1 + 2', '2 - 1', '2 * 3', '3 / 2']
+    two_numbers(expression_list)
+    print(f'1 + 1 * 5 = ', evaluate_expression('1 + 1 * 5'))
+    print(f'(1 + 1) * 5 = ', evaluate_expression('(1 + 1) * 5'))
+
+    # add an expression
+    expression = input("Enter an expression: ")
+    print(f'{expression} = ', evaluate_expression(expression))
+
+if __name__ == "__main__":
+    main()
+    
