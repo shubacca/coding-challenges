@@ -1,0 +1,2 @@
+## Scheduling Automation App
+This tool helps one schedule events on their calendar, with people outside one's organization. It removes the tediousness with going back and forth via email to find a slot that works. 
